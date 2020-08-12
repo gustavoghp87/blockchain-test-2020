@@ -60,8 +60,8 @@ router.post('/new', async (req, res) => {
         // let lastNonce = blockchainJson.blockchain[blockchainJson.blockchain.length-1].nonce;
         let dif = blockchainJson.difficulty;
         let lastTime = blockchainJson.lastTime;
-        if (lastTime>2) dif = dif - 1;
-        if (lastTime<2) dif = dif + 1;
+        // if (lastTime>2) dif = dif - 1;
+        // if (lastTime<2) dif = dif + 1;
         console.log("Ult dif:", blockchainJson.difficulty, " , nueva dif:", dif)
 
         let smashingCoin = new CryptoBlockchain(dif);
