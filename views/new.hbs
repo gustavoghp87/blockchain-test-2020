@@ -1,0 +1,36 @@
+
+<a type="button" class="btn btn-danger" style="float:right; margin-right:10%; width:200px; margin-top:10px; border-radius:10px;" href="/">TRANSFER</a>
+<br>
+<br>
+<h1 style="color:blue;"> &nbsp; &nbsp; Crypto BlockChain</h1>
+<br>
+<hr>
+<br>
+<script> let date; </script>
+
+{{#each blockchainJson.blockchain}}
+
+    <div class="card" style="display:block; margin:auto; width:80%; padding-left:15px; background-color:#eeeeee;">
+        <div class="card-body">
+            <h5 class="card-title">{{index}} - <span id="date{{@index}}"></span> ({{timestamp}})</h5>
+            <h4 class="card-text">Data:</h4>
+            <ul class="card-text">
+                <h5 class="card-text">Sender: {{data.sender}}</h5>
+                <h5 class="card-text">Recipient: {{data.recipient}}</h5>
+                <h5 class="card-text">Quantity: {{data.quantity}}</h5>
+            </ul>
+            <h6>Preceding Hash: {{precedingHash}}</h6>
+            <h6>Nonce: {{nonce}}</h6>
+            <h6>Hash: {{hash}}</h6>
+        </div>
+    </div>
+    <br>
+    <hr>
+    <br>
+
+    <script>
+        date = new Date({{timestamp}});
+        document.getElementById('date{{@index}}').innerText = date;
+    </script>
+{{/each}}
+

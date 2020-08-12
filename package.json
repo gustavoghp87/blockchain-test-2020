@@ -1,0 +1,30 @@
+{
+  "name": "blockchain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@handlebars/allow-prototype-access": "^1.0.3",
+    "bs58": "^4.0.1",
+    "crypto-js": "^4.0.0",
+    "express": "^4.17.1",
+    "express-handlebars": "^4.0.6",
+    "handlebars": "^4.7.6",
+    "morgan": "^1.10.0",
+    "node-fetch": "^2.6.0",
+    "path": "^0.12.7",
+    "wallet-address-validator": "^0.2.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}

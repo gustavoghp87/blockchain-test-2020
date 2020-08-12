@@ -1,0 +1,124 @@
+    const crypto = require("crypto");
+    const path = require("path");
+    //var fs = require("fs");
+    const passphrase = "mySecret"
+
+    const encryptStringWithRsaPublicKey = (toEncrypt, relativeOrAbsolutePathToPublicKey) => {
+        var absolutePath = path.resolve(relativeOrAbsolutePathToPublicKey);
+        var publicKey = fs.readFileSync(absolutePath, "utf8");
+        var buffer = new Buffer(toEncrypt);
+        var encrypted = crypto.publicEncrypt(publicKey, buffer);
+        return encrypted.toString("base64");
+    };
+
+    const decryptStringWithRsaPrivateKey = (toDecrypt, relativeOrAbsolutePathtoPrivateKey) => {
+        var absolutePath = path.resolve(relativeOrAbsolutePathtoPrivateKey);
+        var privateKey = fs.readFileSync(absolutePath, "utf8");
+        var buffer = new Buffer(toDecrypt, "base64");
+        //var decrypted = crypto.privateDecrypt(privateKey, buffer);
+        const decrypted = crypto.privateDecrypt(
+            {
+                key: privateKey.toString(),
+                passphrase: passphrase,
+            },
+            buffer,
+        )
+        return decrypted.toString("utf8");
+    };
+
+    const { writeFileSync } = require('fs')
+    const { generateKeyPairSync } = require('crypto')
+
+    function generateKeys() {
+        const { publicKey, privateKey } = generateKeyPairSync('rsa', 
+        {
+                modulusLength: 4096,
+                namedCurve: 'secp256k1', 
+                publicKeyEncoding: {
+                    type: 'spki',
+                    format: 'pem'     
+                },     
+                privateKeyEncoding: {
+                    type: 'pkcs8',
+                    format: 'pem',
+                    cipher: 'aes-256-cbc',
+                    passphrase: passphrase
+                } 
+        });
+
+        writeFileSync('private.pem', privateKey)
+        writeFileSync('public.pem', publicKey)
+    }
+
+    generateKeys();
+
+    let a = encryptStringWithRsaPublicKey("hello", "public.pem")
+    let b = decryptStringWithRsaPrivateKey(a, "private.pem");
+    console.log(b)
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+const CryptoJS = require("crypto-js");
+var ciphertext = CryptoJS.AES.encrypt('my message', '1GzE6GG3qecDUoGXNyn2zqkRwhhFCZMiqN').toString();
+
+"KxTsEDQps9UremH1n2RgE7bsP1vUzkoDbdZuhahjsstZNVt8rogf"
+
+// Decrypt
+var bytes  = CryptoJS.AES.decrypt(ciphertext, '1GzE6GG3qecDUoGXNyn2zqkRwhhFCZMiqN');
+var originalText = bytes.toString(CryptoJS.enc.Utf8);
+
+console.log("Encriptado:", ciphertext)
+console.log("Desencriptado:", originalText); // 'my message'
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+    const crypto = require('asymmetric-crypto')
+ 
+    // Generate a key pair
+    const keyPair = crypto.keyPair()
+    console.log(keyPair.publicKey)
+    console.log(keyPair.secretKey)
+    
+    // Regenerate a key pair from the secret key
+    const newKeyPair = crypto.fromSecretKey(keyPair.secretKey)
+    // -> {
+    //   secretKey: 'KOy7fMWMkRc+QX8dzpfX9VwJKlc/+Zkyw5C7RGTXT920IjiKUdOSe/3sNnrETw7ej9TBFzsPyRfkWGMsGLAufQ==',
+    //   publicKey: 'tCI4ilHTknv97DZ6xE8O3o/UwRc7D8kX5FhjLBiwLn0='
+    // }
+    
+    const myKeyPair = crypto.keyPair()
+    const theirKeyPair = crypto.keyPair()
+    
+    // Encrypt data
+    const encrypted = crypto.encrypt('some data', theirKeyPair.publicKey, myKeyPair.secretKey)
+    // -> {
+    //   data: '63tP2r8WQuJ+k+jzsd8pbT6WYPHMTafpeg==',
+    //   nonce: 'BDHALdoeBiGg7wJbVdfJhVQQyvpxrBSo'
+    // }
+    
+    // Decrypt data
+    const decrypted = crypto.decrypt(encrypted.data, encrypted.nonce, myKeyPair.publicKey, theirKeyPair.secretKey)
+    // -> 'some data'
+    
+    // Sign a message
+    const message = 'some message'
+    const signature = crypto.sign(message, myKeyPair.secretKey)
+    // -> '8oz1aNkSBG1qvYhc+E2VBkgHSxCORGdsyf7LFQuLDmZvJt6vaEzHMIsofmTykMunhCrChEHT9Fgw3sp/W6+7Bw=='
+    
+    // Verify the signature on a message
+    const validSignature = crypto.verify(message, signature, myKeyPair.publicKey)
+    // -> true
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    "You can check that the Bitcoin address is valid by decoding the Base58 Check Encoding of the address. When you decode the base58 string, you should have 25 hex bytes. The last 4 bytes are a checksum. They are the first 4 bytes of the double sha256 hash of the first 21 bytes of what you decoded. So you can hash those 21 bytes and make sure that they match the last 4 bytes. If they do, then the address is valid and coins can be sent to it."
+
+    "Decode the private key to its bytes in the same way as you did for the address, it uses the same encoding scheme. The checksum will be the hash of everything that is not the checksum."
+    "The actual private key will be 32 bytes long, starting from the second byte of the decode Base58 string. Take those 32 bytes and derive the ECDSA public key from them."
+    "If your private key string (the original base58 string you started with) began with a K or L, the public key will need to be compressed, so compress the public key as specified in Section 2.3.3 of the SEC 1: Elliptic Curve Cryptography standard. Take the public key and hash it first with SHA256 then that result with RIPEMD 160. Compare your resulting bytes to your decoded address from earlier. It should match the 20 bytes starting from the second byte of the decoded address."

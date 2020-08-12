@@ -1,0 +1,54 @@
+<a type="button" class="btn btn-danger" style="float:right; margin-right:10%; width:200px; margin-top:10px; border-radius:10px;" href="/register">REGISTER</a>
+<br>
+<br>
+<h1 style="color:blue;"> &nbsp; &nbsp; Crypto BlockChain</h1>
+<br>
+<br>
+<div class="container" style="max-width:500px; border: 1px solid gray; padding:30px; border-radius:5px;">
+    <label for="Sender">Sender: (public key)</label>
+    <input class="form-control" type="text" placeholder="Sender..." name="sender" value="a" id="senderInput" autofocus>
+    <br>
+    <label for="Sender">Sender: (private key)</label>
+    <input class="form-control" type="text" placeholder="Sender private key..." name="senderPrivateInput" value="X2dgf3aCGhm3a6fdf2sdfc" id="senderPrivateInput">
+    <br>
+    <label for="Recipient">Recipient: (public key)</label>
+    <input class="form-control" type="text" placeholder="Recipient..." name="recipient" value="b" id="recipientInput">
+    <br>
+    <label for="Quantity">Quantity to transfer:</label>
+    <input class="form-control" type="number" placeholder="Quantity..." name="quantity" value="10" id="quantityInput">
+    <br>
+    <button class="btn btn-primary" style="width:100%" id="sendBtn">SEND</button>
+</div>
+
+
+<script>
+    document.getElementById('sendBtn').addEventListener('click', () => {
+        const sender = document.getElementById('senderInput').value.trim();
+        const senderPrivate = document.getElementById('senderPrivateInput').value.trim();
+        const recipient = document.getElementById('recipientInput').value.trim();
+        const quantity = document.getElementById('quantityInput').value.trim();
+        if (sender!="" && senderPrivate && recipient!="" && quantity>0) {
+            console.log("aca")
+            newTrans = {
+                sender,
+                senderPrivate,
+                recipient,
+                quantity
+            }
+            fetch('/new', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(newTrans)
+            }).then( resp => resp.json())
+            .then( json => {
+                console.log(json)
+                if (json.verif===true) window.location.replace('/register');
+                    else
+                        if (json.balanceProblem)
+                            alert("Balance is not enough: " + json.balance);
+                        else
+                            alert("Transaction doesn't verified")
+            })
+        };
+    });
+</script>
